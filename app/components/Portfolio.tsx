@@ -1,114 +1,163 @@
 "use client";
 
+import { useEffect, useRef, useState, useLayoutEffect } from "react";
 import { ExternalLink } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-const projects = [
-  {
-    title: "E-commerce Store",
-    desc: "მაღალი performance ონლაინ მაღაზია React + Node.js-ით",
-    tags: ["React", "Node.js", "UI/UX"],
-    img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=1200&q=80",
-  },
-  {
-    title: "Business Landing",
-    desc: "კორპორატიული landing page თანამედროვე დიზაინით",
-    tags: ["Next.js", "Tailwind"],
-    img: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80",
-  },
-  {
-    title: "Admin Dashboard",
-    desc: "ინტელექტუალური admin panel მონაცემების მართვისთვის",
-    tags: ["React", "Dashboard"],
-    img: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80",
-  },
+gsap.registerPlugin(ScrollTrigger);
 
-  // ➕ NEW 3 PROJECTS
-  {
-    title: "ფიტნეს აპლიკაცია",
-    desc: "ვარჯიშისა და პროგრესის tracking სისტემა",
-    tags: ["React", "Mobile UI"],
-    img: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80",
-  },
-  {
-    title: "რესტორნის ვებსაიტი",
-    desc: "ონლაინ მენიუ და დაჯავშნის სისტემა",
-    tags: ["Next.js", "Booking"],
-    img: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1200&q=80",
-  },
-  {
-    title: "სტარტაპ ლენდინგი",
-    desc: "მაღალი კონვერტაციის marketing page",
-    tags: ["Landing", "UI/UX"],
-    img: "https://images.unsplash.com/photo-1522542550221-31fd19575a2d?auto=format&fit=crop&w=1200&q=80",
-  },
-];
+type Project = {
+  id: string;
+  title: string;
+  description: string;
+  img: string;
+  tags: string[];
+  link: string;
+};
 
 export default function Portfolio() {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const sectionRef = useRef<HTMLDivElement | null>(null);
+  const trackRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      const { data, error } = await supabase
+        .from("portfolio")
+        .select("*")
+        .order("id", { ascending: false });
+
+      if (!error) setProjects(data || []);
+    };
+    fetchProjects();
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!projects.length || !trackRef.current || !sectionRef.current) return;
+
+    const track = trackRef.current;
+    const section = sectionRef.current;
+
+    let mm = gsap.matchMedia();
+
+    mm.add("(min-width: 1024px)", () => {
+      // ჰორიზონტალური სქროლი მხოლოდ Desktop-ზე (1024px+)
+      const getScrollAmount = () => -(track.scrollWidth - window.innerWidth);
+
+      gsap.to(track, {
+        x: getScrollAmount,
+        ease: "none",
+        scrollTrigger: {
+          trigger: section,
+          start: "top top",
+          end: () => `+=${track.scrollWidth * 0.5}`, 
+          scrub: 1,
+          pin: true,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+        },
+      });
+    });
+
+    return () => mm.revert();
+  }, [projects]);
+
   return (
-    <section className="relative py-24 bg-white z-10">
+    <section 
+      ref={sectionRef} 
+      className="relative py-16 md:py-24 z-30"
+    >
+      {/* ფონის დეკორაცია */}
+      <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-indigo-200/30 blur-[120px] rounded-full pointer-events-none" />
 
-      {/* glow */}
-      <div className="absolute top-[-150px] right-[-150px] w-[500px] h-[500px] bg-indigo-300/20 blur-3xl rounded-full" />
-      {/* <div className="absolute bottom-[-150px] left-[-150px] w-[400px] h-[400px] bg-sky-300/20 blur-3xl rounded-full" /> */}
-
-      <div className="max-w-6xl mx-auto px-6 relative z-10 text-center">
-
-        <h2 className="text-3xl md:text-5xl font-bold text-slate-800">
+      {/* სათაური */}
+      <div className="max-w-6xl mx-auto px-6 mb-12 flex flex-col items-center text-center relative z-10">
+        <h2 className="text-4xl md:text-6xl font-extrabold text-slate-900 tracking-tight">
           ჩვენი ნამუშევრები
         </h2>
-
-        <p className="mt-4 text-slate-500 max-w-2xl mx-auto">
-          რეალური პროექტები, რომლებიც აჩვენებს ჩვენს გამოცდილებას და ხარისხს
+        <p className="mt-4 text-slate-600 text-lg max-w-2xl mx-auto">
+          გაეცანით ჩვენს ბოლო პროექტებს. თითოეული მათგანი შექმნილია უახლესი ტექნოლოგიების გამოყენებით.
         </p>
+      </div>
 
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  
+      <div
+        ref={trackRef}
+        className="flex flex-col lg:flex-row lg:flex-nowrap gap-8 px-6 lg:px-0 items-center lg:items-start will-change-transform lg:w-max relative z-10"
+      >
+        {/* მარცხენა დაშორება მხოლოდ დესკტოპზე */}
+        <div className="hidden lg:block min-w-[10vw] h-10 flex-shrink-0" />
 
-          {projects.map((project, index) => (
-            <div
-              key={index}
-              className="group rounded-2xl overflow-hidden border border-slate-100 bg-white/70 backdrop-blur hover:shadow-2xl hover:-translate-y-2 transition duration-500"
-            >
+        {projects.map((project) => (
+          <div
+            key={project.id}
+            className="project-card group relative z-30 w-full max-w-[450px] lg:min-w-[500px] flex-shrink-0 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden"
+          >
+            {/* IMAGE AREA */}
+            <div className="h-64 md:h-80 2xl:h-96 overflow-hidden relative">
+              <img
+                src={project.img}
+                alt={project.title}
+                className="w-full h-full object-cover lg:group-hover:scale-110 transition-transform duration-700 ease-out"
+              />
 
-              <div className="h-48 overflow-hidden relative">
-                <img
-                  src={project.img}
-                  alt={project.title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition duration-700"
-                />
-                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition" />
-              </div>
-
-              <div className="p-5 text-left">
-
-                <h3 className="text-lg font-semibold text-slate-800">
-                  {project.title}
-                </h3>
-
-                <p className="mt-2 text-sm text-slate-500">
-                  {project.desc}
-                </p>
-
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {project.tags.map((tag, i) => (
-                    <span
-                      key={i}
-                      className="text-xs px-2 py-1 rounded-full bg-sky-50 text-sky-600 border border-sky-100"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-
-                <button className="mt-4 flex items-center gap-2 text-sm text-indigo-600 font-medium hover:gap-3 transition">
-                  ნახვა
-                  <ExternalLink size={16} />
-                </button>
-
-              </div>
+              {/* Overlay: მხოლოდ დესკტოპზე ჩნდება Hover-ისას */}
+              <div className="hidden lg:block absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-500" />
+              
+              {/* მობილურზე ნაზი გრადიენტი, რომ ტექსტი იკითხებოდეს თუ სურათზე დაადებ */}
+              <div className="lg:hidden absolute inset-0 bg-black/5" />
             </div>
-          ))}
 
-        </div>
+            {/* CONTENT AREA */}
+            {/* lg:absolute - დესკტოპზე სურათზეა ზემოდან 
+                lg:opacity-0 - დესკტოპზე თავიდან დამალულია
+                relative - მობილურზე ჩვეულებრივ სურათის ქვემოთაა 
+            */}
+            <div className="relative p-6 lg:absolute lg:bottom-0 lg:left-0 lg:w-full lg:p-8 lg:translate-y-10 lg:opacity-0 lg:group-hover:translate-y-0 lg:group-hover:opacity-100 transition-all duration-500 ease-out z-20">
+              
+              {/* სათაური: მობილურზე შავია, დესკტოპზე თეთრი (Overlay-ს გამო) */}
+              <h3 className="text-2xl font-bold text-slate-900 lg:text-white drop-shadow-sm">
+                {project.title}
+              </h3>
+
+              {/* აღწერა */}
+              <p className="mt-2 text-sm text-slate-600 lg:text-white/80 leading-relaxed line-clamp-2">
+                {project.description}
+              </p>
+
+              {/* თეგები */}
+              <div className="mt-4 flex flex-wrap gap-2">
+                {project.tags?.map((tag, i) => (
+                  <span
+                    key={i}
+                    className="text-[10px] uppercase tracking-wider font-semibold px-2 py-1 rounded-md bg-slate-100 lg:bg-white/20 text-slate-600 lg:text-white backdrop-blur-sm"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+
+              {/* ბმული */}
+              {project.link && (
+                <div className="mt-6">
+                  <a
+                    href={project.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-sm font-bold text-indigo-600 lg:text-white hover:gap-4 transition-all"
+                  >
+                    ნახვა <ExternalLink size={16} />
+                  </a>
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+        
+        {/* მარჯვენა დაშორება მხოლოდ დესკტოპზე */}
+        <div className="hidden lg:block min-w-[10vw] h-10 flex-shrink-0" />
       </div>
     </section>
   );

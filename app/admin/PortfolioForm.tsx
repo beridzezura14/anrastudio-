@@ -10,14 +10,14 @@ type Project = {
   description: string;
   img: string;
   tags: string[];
-  link: string; // ⭐ ADDED
+  link: string;
 };
 
 export default function PortfolioForm() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [file, setFile] = useState<File | null>(null);
-  const [link, setLink] = useState(""); // ⭐ ADDED
+  const [link, setLink] = useState(""); 
   const [loading, setLoading] = useState(false);
 
   const [projects, setProjects] = useState<Project[]>([]);
