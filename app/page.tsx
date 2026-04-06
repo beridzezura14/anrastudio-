@@ -1,7 +1,12 @@
+import Blog from "./components/Blog";
+import Contact from "./components/Contact";
+import FAQ from "./components/FAQ";
 import Hero from "./components/Hero";
+import HowWeWork from "./components/HowWeWork";
 import Portfolio from "./components/Portfolio";
 import Pricing from "./components/Pricing";
 import Services from "./components/services";
+
 
 
 export default function Home() {
@@ -20,6 +25,10 @@ export default function Home() {
         <Services />
         <Portfolio />
         <Pricing />
+        <HowWeWork />
+        <Contact />
+        <FAQ />
+        <Blog />
       </div>
 
     </main>

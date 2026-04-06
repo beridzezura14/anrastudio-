@@ -1,6 +1,45 @@
 "use client";
 
-import { Paintbrush, Zap, Settings, LineChart } from "lucide-react";
+import { Paintbrush, Zap, Settings, LineChart, QrCode, BarChart3 } from "lucide-react";
+
+const services = [
+  {
+    title: "დახვეწილი დიზაინი",
+    desc: "ვქმნით თანამედროვე, ესთეტიკურ და მომხმარებელზე ორიენტირებულ დიზაინს.",
+    icon: Paintbrush,
+    color: "sky",
+  },
+  {
+    title: "სისწრაფე",
+    desc: "ჩვენ დაგიმზადებთ თქვენს ციფრულ პროდუქტს უსწრაფესად.",
+    icon: Zap,
+    color: "indigo",
+  },
+  {
+    title: "ტექნიკური მხარდაჭერა",
+    desc: "საიტის მუდმივი განახლება და უსაფრთხოება.",
+    icon: Settings,
+    color: "violet",
+  },
+  {
+    title: "SEO ოპტიმიზაცია",
+    desc: "Google ranking-ის გაუმჯობესება და მეტი მომხმარებელი.",
+    icon: LineChart,
+    color: "emerald",
+  },
+  {
+    title: "QR მენიუ",
+    desc: "რესტორნებისთვის და ბიზნესებისთვის QR კოდზე დაფუძნებული ციფრული მენიუ.",
+    icon: QrCode,
+    color: "rose",
+  },
+  {
+  title: "Google Analytics ინტეგრაცია",
+  desc: "ვაერთებთ Google Analytics-ს, რათა შეძლო მომხმარებლის ქცევის ანალიზი და ბიზნესის ზრდა მონაცემებზე დაყრდნობით.",
+  icon: BarChart3,
+  color: "amber",
+}
+];
 
 export default function Services() {
   return (
@@ -21,71 +60,38 @@ export default function Services() {
         </p>
 
         {/* Grid */}
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
 
-          {/* Card 1 */}
-          <div className="group p-6 md:p-8 rounded-2xl border border-slate-100 bg-white/70 backdrop-blur hover:shadow-xl hover:-translate-y-1 transition">
+          {services.map((service, i) => {
+            const Icon = service.icon;
 
-            <div className="w-12 h-12 rounded-xl bg-sky-50 flex items-center justify-center mb-4 group-hover:bg-sky-100 transition">
-              <Paintbrush className="text-sky-500 w-6 h-6" />
-            </div>
+            return (
+              <div
+                key={i}
+                className="group p-6 md:p-8 rounded-2xl border border-slate-100 bg-white/70 backdrop-blur hover:shadow-xl hover:-translate-y-1 transition"
+              >
 
-            <h3 className="text-xl font-semibold text-slate-800">
-              დახვეწილი დიზაინი
-            </h3>
+                {/* icon */}
+                <div
+                  className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 
+                  bg-${service.color}-50 group-hover:bg-${service.color}-100 transition`}
+                >
+                  <Icon className={`text-${service.color}-500 w-6 h-6`} />
+                </div>
 
-            <p className="mt-2 text-slate-500 text-sm md:text-base leading-relaxed">
-              ვქმნით თანამედროვე, ესთეტიკურ და მომხმარებელზე ორიენტირებულ დიზაინს.
-            </p>
-          </div>
+                {/* title */}
+                <h3 className="text-xl font-semibold text-slate-800">
+                  {service.title}
+                </h3>
 
-          {/* Card 2 */}
-          <div className="group p-6 md:p-8 rounded-2xl border border-slate-100 bg-white/70 backdrop-blur hover:shadow-xl hover:-translate-y-1 transition">
+                {/* desc */}
+                <p className="mt-2 text-slate-500 text-sm md:text-base leading-relaxed">
+                  {service.desc}
+                </p>
 
-            <div className="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center mb-4 group-hover:bg-indigo-100 transition">
-              <Zap className="text-indigo-500 w-6 h-6" />
-            </div>
-
-            <h3 className="text-xl font-semibold text-slate-800">
-              სისწრაფე
-            </h3>
-
-            <p className="mt-2 text-slate-500 text-sm md:text-base leading-relaxed">
-              ოპტიმიზებული კოდი და მაღალი performance.
-            </p>
-          </div>
-
-          {/* Card 3 */}
-          <div className="group p-6 md:p-8 rounded-2xl border border-slate-100 bg-white/70 backdrop-blur hover:shadow-xl hover:-translate-y-1 transition">
-
-            <div className="w-12 h-12 rounded-xl bg-violet-50 flex items-center justify-center mb-4 group-hover:bg-violet-100 transition">
-              <Settings className="text-violet-500 w-6 h-6" />
-            </div>
-
-            <h3 className="text-xl font-semibold text-slate-800">
-              ტექნიკური მხარდაჭერა
-            </h3>
-
-            <p className="mt-2 text-slate-500 text-sm md:text-base leading-relaxed">
-              საიტის მუდმივი განახლება და უსაფრთხოება.
-            </p>
-          </div>
-
-          {/* Card 4 */}
-          <div className="group p-6 md:p-8 rounded-2xl border border-slate-100 bg-white/70 backdrop-blur hover:shadow-xl hover:-translate-y-1 transition">
-
-            <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center mb-4 group-hover:bg-emerald-100 transition">
-              <LineChart className="text-emerald-500 w-6 h-6" />
-            </div>
-
-            <h3 className="text-xl font-semibold text-slate-800">
-              SEO ოპტიმიზაცია
-            </h3>
-
-            <p className="mt-2 text-slate-500 text-sm md:text-base leading-relaxed">
-              Google ranking-ის გაუმჯობესება და მეტი მომხმარებელი.
-            </p>
-          </div>
+              </div>
+            );
+          })}
 
         </div>
       </div>
