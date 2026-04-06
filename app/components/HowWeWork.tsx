@@ -1,6 +1,12 @@
 "use client";
 
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
 import { Lightbulb, PenTool, Code2, Rocket } from "lucide-react";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const steps = [
   {
@@ -26,17 +32,53 @@ const steps = [
 ];
 
 export default function HowWeWork() {
-  return (
-    <section className="relative py-24 -z-10">
+  const sectionRef = useRef<HTMLDivElement | null>(null);
 
-      {/* background glow */}
-      {/* <div className="absolute left-[-120px] bottom-40 w-[400px] h-[400px] bg-indigo-300/20 blur-3xl rounded-full pointer-events-none" /> */}
+useEffect(() => {
+  const ctx = gsap.context(() => {
+    ScrollTrigger.refresh();
+
+    gsap.from(".how-title", {
+      opacity: 0,
+      y: 20,
+      duration: 0.8,
+      ease: "power3.out",
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: "top 80%",
+        once: true,
+      },
+    });
+
+    // 🔥 EACH STEP ANIMATION SEPARATELY
+    gsap.utils.toArray<HTMLElement>(".step-card").forEach((el) => {
+      gsap.from(el, {
+        opacity: 0,
+        y: 50,
+        scale: 0.97,
+        duration: 0.8,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: el,
+          start: "top 85%",
+          toggleActions: "play none none none",
+        },
+      });
+    });
+
+  }, sectionRef);
+
+  return () => ctx.revert();
+}, []);
+
+  return (
+    <section ref={sectionRef} className="relative py-24">
 
       <div className="max-w-6xl mx-auto px-6 relative z-10">
 
         {/* title */}
         <div className="text-center">
-          <h2 className="text-3xl md:text-5xl font-bold text-slate-800">
+          <h2 className="how-title text-3xl md:text-5xl font-bold text-slate-800">
             როგორ ვმუშაობთ
           </h2>
           <p className="mt-4 text-slate-500 max-w-2xl mx-auto">
@@ -59,7 +101,7 @@ export default function HowWeWork() {
               return (
                 <div
                   key={i}
-                  className={`flex flex-col md:flex-row items-center ${
+                  className={`step-card flex flex-col md:flex-row items-center ${
                     isLeft ? "md:flex-row" : "md:flex-row-reverse"
                   }`}
                 >
@@ -68,7 +110,6 @@ export default function HowWeWork() {
                   <div className="w-full md:w-1/2 p-4">
                     <div className="bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition border border-slate-100">
 
-                      {/* icon */}
                       <div className="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center mb-4">
                         <Icon className="text-indigo-500 w-6 h-6" />
                       </div>

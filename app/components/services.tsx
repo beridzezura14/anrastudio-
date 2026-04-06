@@ -1,6 +1,30 @@
 "use client";
 
-import { Paintbrush, Zap, Settings, LineChart, QrCode, BarChart3 } from "lucide-react";
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+import {
+  Paintbrush,
+  Zap,
+  Settings,
+  LineChart,
+  QrCode,
+  BarChart3,
+} from "lucide-react";
+
+gsap.registerPlugin(ScrollTrigger);
+
+type ServiceColor = "sky" | "indigo" | "violet" | "emerald" | "rose" | "amber";
+
+const colors: Record<ServiceColor, string> = {
+  sky: "text-sky-500 bg-sky-50",
+  indigo: "text-indigo-500 bg-indigo-50",
+  violet: "text-violet-500 bg-violet-50",
+  emerald: "text-emerald-500 bg-emerald-50",
+  rose: "text-rose-500 bg-rose-50",
+  amber: "text-amber-500 bg-amber-50",
+};
 
 const services = [
   {
@@ -34,61 +58,107 @@ const services = [
     color: "rose",
   },
   {
-  title: "Google Analytics ინტეგრაცია",
-  desc: "ვაერთებთ Google Analytics-ს, რათა შეძლო მომხმარებლის ქცევის ანალიზი და ბიზნესის ზრდა მონაცემებზე დაყრდნობით.",
-  icon: BarChart3,
-  color: "amber",
-}
+    title: "Google Analytics ინტეგრაცია",
+    desc: "ვაერთებთ Google Analytics-ს, რათა შეძლო მომხმარებლის ქცევის ანალიზი.",
+    icon: BarChart3,
+    color: "amber",
+  },
 ];
 
 export default function Services() {
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const cardsRef = useRef<HTMLDivElement[]>([]);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      if (!sectionRef.current) return;
+
+      // reset state first (IMPORTANT for no flicker)
+      gsap.set(cardsRef.current, {
+        opacity: 0,
+        y: 30,
+        scale: 0.97,
+      });
+
+      gsap.set(".title", {
+        opacity: 0,
+        y: 20,
+      });
+
+      // TITLE
+      gsap.to(".title", {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 80%",
+          once: true,
+        },
+      });
+
+      // CARDS
+      gsap.to(cardsRef.current, {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.8,
+        ease: "power3.out",
+        stagger: 0.12,
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 80%",
+          once: true,
+        },
+      });
+
+      // safe refresh
+      ScrollTrigger.refresh();
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className="relative py-24 bg-white">
+    <section ref={sectionRef} className="py-24 bg-white overflow-hidden">
 
-      {/* glow */}
-      <div className="absolute top-40 left-[-120px] w-[400px] h-[400px] bg-sky-300/20 blur-3xl rounded-full pointer-events-none" />
+      <div className="max-w-6xl mx-auto px-6 text-center">
 
-      <div className="max-w-6xl mx-auto px-6 text-center relative z-10">
-
-        {/* Heading */}
-        <h2 className="text-3xl md:text-5xl font-bold text-slate-800">
+        <h2 className="title text-3xl md:text-5xl font-bold text-slate-800">
           ჩვენი სერვისები
         </h2>
 
-        <p className="mt-4 text-slate-500 max-w-2xl mx-auto text-sm md:text-base">
-          ვქმნით სრულ ციფრულ გადაწყვეტილებებს, რომლებიც ეხმარება თქვენს ბიზნესს ზრდაში
+        <p className="mt-4 text-slate-500 max-w-2xl mx-auto">
+          ვქმნით სრულ ციფრულ გადაწყვეტილებებს
         </p>
 
-        {/* Grid */}
         <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
 
-          {services.map((service, i) => {
-            const Icon = service.icon;
+          {services.map((s, i) => {
+            const Icon = s.icon;
 
             return (
               <div
                 key={i}
-                className="group p-6 md:p-8 rounded-2xl border border-slate-100 bg-white/70 backdrop-blur hover:shadow-xl hover:-translate-y-1 transition"
+                ref={(el) => {
+                  if (el) cardsRef.current[i] = el;
+                }}
+                className="p-6 md:p-8 rounded-2xl border border-slate-100 bg-white shadow-sm"
               >
-
-                {/* icon */}
                 <div
-                  className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 
-                  bg-${service.color}-50 group-hover:bg-${service.color}-100 transition`}
+                  className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${colors[s.color]}`}
                 >
-                  <Icon className={`text-${service.color}-500 w-6 h-6`} />
+                  <Icon className="w-6 h-6" />
                 </div>
 
-                {/* title */}
                 <h3 className="text-xl font-semibold text-slate-800">
-                  {service.title}
+                  {s.title}
                 </h3>
 
-                {/* desc */}
-                <p className="mt-2 text-slate-500 text-sm md:text-base leading-relaxed">
-                  {service.desc}
+                <p className="mt-2 text-slate-500 text-sm">
+                  {s.desc}
                 </p>
-
               </div>
             );
           })}
