@@ -1,84 +1,31 @@
 "use client";
 
-import { Check, Timer } from "lucide-react";
+import { Check } from "lucide-react";
 import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 
-const plans = [
-  {
-    name: "Starter Business Site",
-    subtitle: "Modern Business Website",
-    originalPrice: 700,
-    discountPrice: 700 - (700 * 30) / 100,
-    color: "from-sky-400 to-indigo-400",
-    features: [
-      "1-5 გვერდიანი ვებსაიტი",
-      "1 წელი დომენი უფასოდ",
-      "თანამედროვე responsive დიზაინი",
-      "საკონტაქტო ფორმა",
-      "სწრაფი performance",
-      "SEO-ის საბაზისო სტრუქტურა",
-    ],
-  },
-  {
-    name: "Business + Admin Panel",
-    subtitle: "Managed Website System",
-    originalPrice: 900,
-    discountPrice: 900 - (900 * 30) / 100,
-    color: "from-indigo-400 to-violet-400",
-    features: [
-      "1-5 გვერდიანი ვებსაიტი",
-      "1 წელი დომენი უფასოდ",
-      "თანამედროვე responsive დიზაინი",
-      "საკონტაქტო ფორმა",
-      "სწრაფი performance",
-      "ადმინ პანელი (კონტენტის მართვა)",
-      "მონაცემთა ბაზის ინტეგრაცია",
-      "დინამიური კონტენტი",
-      "SEO-ის ოპტიმიზაცია",
-    ],
-    popular: true,
-  },
-  {
-    name: "Premium Website",
-    subtitle: "Animated + Admin Experience",
-    originalPrice: "1400₾ – 1800₾",
-    discountPrice: "980₾ – 1260₾",
-    color: "from-violet-400 to-pink-400",
-    features: [
-      "ულიმიტო გვერდები",
-      "1 წელი დომენი უფასოდ",
-      "თანამედროვე responsive დიზაინი",
-      "საკონტაქტო ფორმა",
-      "სწრაფი performance",
-      "ადმინ პანელი (კონტენტის მართვა)",
-      "მონაცემთა ბაზის ინტეგრაცია",
-      "დინამიური კონტენტი",
-      "ანიმაციები (Framer Motion)",
-      "advanced UI/UX დიზაინი",
-      "ადმინ პანელი",
-      "დინამიური სექციები",
-      "SEO-ის ოპტიმიზაცია",
-    ],
-  },
-];
-
-// 🧠 countdown helper
-function getTargetDate() {
-  if (typeof window === "undefined") return new Date();
-
-  const saved = localStorage.getItem("discount_end");
-
-  if (saved) return new Date(saved);
-
-  const newDate = new Date();
-  newDate.setDate(newDate.getDate() + 30);
-
-  localStorage.setItem("discount_end", newDate.toISOString());
-
-  return newDate;
-}
+// ---------------- TYPES ----------------
+type Feature = { id: string; feature: string };
+type Plan = {
+  id: string;
+  name: string;
+  subtitle: string;
+  original_price: number;
+  discount_price: number | null;
+  popular: boolean;
+  plan_features?: Feature[];
+};
+type DiscountSettings = {
+  percent: number;
+  expires_at: string | null;
+  active: boolean;
+};
 
 export default function Pricing() {
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [discount, setDiscount] = useState<DiscountSettings | null>(null);
+  const [mounted, setMounted] = useState(false);
+
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
@@ -86,16 +33,51 @@ export default function Pricing() {
     seconds: 0,
   });
 
+  // 1. DATA FETCHING
   useEffect(() => {
-    const targetDate = getTargetDate();
+    const fetchData = async () => {
+      try {
+        // გეგმები (დალაგებული რევერსულად: ახალი პირველი)
+        const { data: plansData } = await supabase
+          .from("plans")
+          .select(`*, plan_features(id, feature)`)
+          .order("created_at", { ascending: true });
 
-    const interval = setInterval(() => {
+        if (plansData) setPlans(plansData);
+
+        // ფასდაკლება
+        const { data: discData } = await supabase
+          .from("discount_settings")
+          .select("*")
+          .eq("active", true)
+          .maybeSingle();
+
+        if (discData) setDiscount(discData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        // მხოლოდ მას შემდეგ, რაც მონაცემები ჩამოვა, ვადასტურებთ "Mounted" სტატუსს
+        // ეს აცილებს თავიდან სინქრონულ Cascading Render-ს
+        setMounted(true);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // 2. COUNTDOWN LOGIC
+  useEffect(() => {
+    if (!discount?.expires_at) return;
+
+    const target = new Date(discount.expires_at).getTime();
+
+    const updateTimer = () => {
       const now = new Date().getTime();
-      const distance = targetDate.getTime() - now;
+      const distance = target - now;
 
       if (distance <= 0) {
-        clearInterval(interval);
-        return;
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+        return false;
       }
 
       setTimeLeft({
@@ -104,147 +86,126 @@ export default function Pricing() {
         minutes: Math.floor((distance / (1000 * 60)) % 60),
         seconds: Math.floor((distance / 1000) % 60),
       });
-    }, 1000);
+      return true;
+    };
 
+    const isActive = updateTimer();
+    if (!isActive) return;
+
+    const interval = setInterval(updateTimer, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [discount?.expires_at]);
+
+  const isExpired = discount?.expires_at
+    ? new Date(discount.expires_at).getTime() < new Date().getTime()
+    : true;
+
+  const hasDiscount = mounted && discount && discount.percent > 0 && !isExpired;
+
+  // Hydration-ის თავიდან ასაცილებლად
+  if (!mounted) return null;
 
   return (
-    <section className="relative py-28 bg-white z-20">
-      {/* glow background */}
-      <div className="absolute top-[-200px] left-[-200px] w-[500px] h-[500px] bg-sky-300/20 blur-3xl rounded-full" />
-      <div className="absolute bottom-[-200px] right-[-200px] w-[500px] h-[500px] bg-indigo-300/20 blur-3xl rounded-full" />
-
-      <div className="max-w-6xl mx-auto px-6 relative z-10 text-center">
-        {/* TITLE */}
-        <h2 className="text-3xl md:text-5xl font-bold text-slate-800">
+    <section className="relative py-28 bg-gradient-to-b from-slate-50 via-white to-slate-100 overflow-hidden">
+      {/* ... დანარჩენი UI უცვლელია ... */}
+      <div className="max-w-6xl mx-auto px-6 text-center relative z-10">
+        <h2 className="text-5xl font-black tracking-tight text-slate-900">
           ჩვენი პაკეტები
         </h2>
-
         <p className="mt-4 text-slate-500 max-w-2xl mx-auto">
-          აირჩიე შენს ბიზნესზე მორგებული ვებსაიტის გადაწყვეტა
+          აირჩეთ სასურველი პაკეთი, ჩვენ ვქმნით სრულ ციფრულ გადაწყვეტილებებს
         </p>
 
-        {/* COUNTDOWN PREMIUM */}
-        <div className="mt-8 inline-flex flex-col items-center gap-4">
-          {/* label */}
-          <div className="px-6 py-2 rounded-full bg-gradient-to-r from-red-500 to-pink-500 text-white text-sm font-medium shadow-lg shadow-red-200">
-            შეთავაზება მთავრდება
-          </div>
-
-          {/* timer cards */}
-          <div className="flex gap-3 md:gap-5">
-            {/* DAYS */}
-            <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-r from-sky-400 to-indigo-500 blur-lg opacity-40 group-hover:opacity-60 transition" />
-              <div className="relative px-5 py-4 rounded-2xl bg-white/70 backdrop-blur border border-white shadow-xl text-center">
-                <div className="text-2xl font-bold bg-gradient-to-r from-sky-500 to-indigo-600 bg-clip-text text-transparent">
-                  {timeLeft.days}
-                </div>
-                <div className="text-xs text-slate-500 mt-1">დღე</div>
-              </div>
+        {/* COUNTDOWN */}
+        {hasDiscount && (
+          <div className="mt-12 animate-in fade-in zoom-in duration-500">
+            <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full text-sm font-bold text-white bg-gradient-to-r from-red-500 via-pink-500 to-orange-500 shadow-xl shadow-pink-200">
+              -{discount.percent}%-იანი ფასდაკლება სრულდება
             </div>
-
-            {/* HOURS */}
-            <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-r from-indigo-400 to-violet-500 blur-lg opacity-40 group-hover:opacity-60 transition" />
-              <div className="relative px-5 py-4 rounded-2xl bg-white/70 backdrop-blur border border-white shadow-xl text-center">
-                <div className="text-2xl font-bold bg-gradient-to-r from-indigo-500 to-violet-600 bg-clip-text text-transparent">
-                  {timeLeft.hours}
+            <div className="flex justify-center gap-4 mt-8">
+              {[
+                { label: "Days", value: timeLeft.days },
+                { label: "Hours", value: timeLeft.hours },
+                { label: "Min", value: timeLeft.minutes },
+                { label: "Sec", value: timeLeft.seconds },
+              ].map((t, i) => (
+                <div key={i} className="relative group">
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br blur opacity-30 group-hover:opacity-60 transition" />
+                  <div className="relative  backdrop-blur-xl rounded-2xl px-5 py-4 min-w-[90px] border border-white/10 shadow-2xl">
+<div className="text-4xl font-black tabular-nums bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+  {String(t.value).padStart(2, "0")}
+</div>
+<div className="text-[11px] uppercase tracking-wider mt-1 bg-gradient-to-r from-slate-900 to-slate-800 bg-clip-text text-transparent font-bold">
+  {t.label}
+</div>
+                  </div>
                 </div>
-                <div className="text-xs text-slate-500 mt-1">საათი</div>
-              </div>
-            </div>
-
-            {/* MINUTES */}
-            <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-r from-violet-400 to-pink-500 blur-lg opacity-40 group-hover:opacity-60 transition" />
-              <div className="relative px-5 py-4 rounded-2xl bg-white/70 backdrop-blur border border-white shadow-xl text-center">
-                <div className="text-2xl font-bold bg-gradient-to-r from-violet-500 to-pink-600 bg-clip-text text-transparent">
-                  {timeLeft.minutes}
-                </div>
-                <div className="text-xs text-slate-500 mt-1">წუთი</div>
-              </div>
-            </div>
-
-            {/* SECONDS */}
-            <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-r from-pink-400 to-red-500 blur-lg opacity-40 group-hover:opacity-60 transition" />
-              <div className="relative px-5 py-4 rounded-2xl bg-white/70 backdrop-blur border border-white shadow-xl text-center">
-                <div className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-red-600 bg-clip-text text-transparent">
-                  {timeLeft.seconds}
-                </div>
-                <div className="text-xs text-slate-500 mt-1">წამი</div>
-              </div>
+              ))}
             </div>
           </div>
-        </div>
+        )}
 
-        {/* GRID */}
-        <div className="mt-14 grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
-          {plans.map((plan, i) => (
-            <div
-              key={i}
-              className="group relative rounded-3xl border border-slate-100 bg-white/70 backdrop-blur p-6 hover:shadow-2xl hover:-translate-y-2 transition duration-500 flex flex-col h-full"
-            >
-              {/* popular badge */}
-              {plan.popular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-xs px-3 py-1 rounded-full z-20">
-                  პოპულარული
-                </div>
-              )}
+        {/* GRID (Plans are already reversed from Supabase) */}
+        <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-10">
+          {plans.map((plan) => {
+            const finalPrice = hasDiscount
+              ? (plan.discount_price ??
+                Math.round(
+                  plan.original_price * (1 - (discount?.percent || 0) / 100),
+                ))
+              : plan.original_price;
 
-              {/* gradient bar */}
+            return (
               <div
-                className={`absolute top-0 left-0 w-[80%] ml-[10%] h-1 bg-gradient-to-r ${plan.color}`}
-              />
-
-              {/* CONTENT WRAPPER */}
-              <div className="flex-1">
-                {/* name */}
-                <h3 className="text-xl font-semibold text-slate-800 mt-2">
-                  {plan.name}
-                </h3>
-
-                <p className="text-sm text-slate-500 mt-1">{plan.subtitle}</p>
-
-                {/* PRICE */}
-                <div className="mt-6 flex items-end justify-between">
-                  <div className="text-sm text-slate-400 line-through">
-                    {plan.originalPrice}
+                key={plan.id}
+                className={`relative group rounded-[2.5rem] p-8 transition-all duration-500 ${plan.popular ? "bg-gradient-to-b from-slate-900 to-slate-800 text-white scale-105 shadow-2xl" : "bg-white border border-slate-200 hover:-translate-y-2 hover:shadow-2xl"}`}
+              >
+                {plan.popular && (
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-500 to-pink-500  text-xs font-black px-4 py-1 rounded-full uppercase shadow-lg">
+                    Most Popular
                   </div>
-
-                  <div className="text-right">
-                    <div className="text-xs text-red-500 font-medium">
-                      -30% OFF
-                    </div>
-
-                    <div className="text-2xl font-bold text-slate-900">
-                      {plan.discountPrice}
-                    </div>
-                  </div>
+                )}
+                <h3 className="text-2xl font-black">{plan.name}</h3>
+                <p
+                  className={
+                    plan.popular ? "text-slate-300 mt-2" : "text-slate-500 mt-2"
+                  }
+                >
+                  {plan.subtitle}
+                </p>
+                <div className="mt-8">
+                  {hasDiscount && (
+                    <span className="text-sm line-through opacity-60 block">
+                      {plan.original_price}₾
+                    </span>
+                  )}
+                  <div className="text-5xl font-black mt-1">{finalPrice}₾</div>
                 </div>
-
-                {/* features */}
-                <div className="mt-5 space-y-3 text-left">
-                  {plan.features.map((f, idx) => (
-                    <div
-                      key={idx}
-                      className="flex items-start gap-2 text-sm text-slate-600"
-                    >
-                      <Check size={16} className="text-green-500 mt-0.5" />
-                      {f}
+                <div className="mt-8 space-y-4 text-left">
+                  {plan.plan_features?.map((f) => (
+                    <div key={f.id} className="flex items-start gap-3 text-sm">
+                      <Check
+                        size={18}
+                        className="text-green-500 shrink-0 mt-0.5"
+                      />
+                      <span
+                        className={
+                          plan.popular ? "text-slate-200" : "text-slate-600"
+                        }
+                      >
+                        {f.feature}
+                      </span>
                     </div>
                   ))}
                 </div>
+                <button
+                  className={`mt-10 w-full py-4 rounded-2xl font-bold transition-all active:scale-95 cursor-pointer ${plan.popular ? "bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-xl" : "bg-slate-900 text-white hover:bg-black"}`}
+                >
+                  არჩევა
+                </button>
               </div>
-
-              {/* button (always bottom) */}
-              <button className="mt-6 w-full py-3 rounded-xl bg-slate-900 text-white font-medium hover:bg-slate-800 transition cursor-pointer">
-                არჩევა
-              </button>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

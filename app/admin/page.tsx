@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import PortfolioForm from "./PortfolioForm";
+import PricingForm from "./PricingForm";
 
 export default function AdminPage() {
   const router = useRouter();
@@ -16,9 +17,9 @@ export default function AdminPage() {
       } = await supabase.auth.getUser();
 
       if (!user) {
-        router.replace("/login"); // 🚫 not logged in → redirect
+        router.replace("/login");
       } else {
-        setLoading(false); // ✅ allow access
+        setLoading(false);
       }
     };
 
@@ -50,6 +51,7 @@ export default function AdminPage() {
       </div>
 
       <PortfolioForm />
+      <PricingForm /> 
     </div>
   );
 }
