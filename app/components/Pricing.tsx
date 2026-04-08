@@ -109,8 +109,8 @@ export default function Pricing() {
     <section className="relative py-28 bg-gradient-to-b from-slate-50 via-white to-slate-100 overflow-hidden">
       {/* ... დანარჩენი UI უცვლელია ... */}
       <div className="max-w-6xl mx-auto px-6 text-center relative z-10">
-        <h2 className="text-5xl font-black tracking-tight text-slate-900">
-          ჩვენი პაკეტები
+        <h2 className="title text-3xl md:text-5xl font-bold text-slate-800">
+          პროექტის ფასები
         </h2>
         <p className="mt-4 text-slate-500 max-w-2xl mx-auto">
           აირჩეთ სასურველი პაკეთი, ჩვენ ვქმნით სრულ ციფრულ გადაწყვეტილებებს

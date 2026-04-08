@@ -74,7 +74,7 @@ export default function Portfolio() {
 
       {/* სათაური */}
       <div className="max-w-6xl mx-auto px-6 mb-12 flex flex-col items-center text-center relative z-10">
-        <h2 className="text-4xl md:text-6xl font-extrabold text-slate-900 tracking-tight">
+        <h2 className="title text-3xl md:text-5xl font-bold text-slate-800">
           ჩვენი ნამუშევრები
         </h2>
         <p className="mt-4 text-slate-600 text-lg max-w-2xl mx-auto">
@@ -85,11 +85,11 @@ export default function Portfolio() {
   
       <div
         ref={trackRef}
-        className="flex flex-col lg:flex-row lg:flex-nowrap gap-8 px-6 lg:px-0 items-center lg:items-start will-change-transform lg:w-max relative z-10"
+        className="flex flex-col lg:flex-row lg:flex-nowrap gap-8 px-6 lg:px-0 items-center lg:items-start will-change-transform lg:w-max justify-center relative z-10"
       >
         {/* მარცხენა დაშორება მხოლოდ დესკტოპზე */}
         <div className="hidden lg:block min-w-[10vw] h-10 flex-shrink-0" />
-
+        
         {projects.map((project) => (
           <div
             key={project.id}
@@ -155,9 +155,41 @@ export default function Portfolio() {
             </div>
           </div>
         ))}
+
+<div className="w-full mt-34 max-w-[350px] flex-shrink-0 order-2 lg:order-none">
+  <a
+    href="/projects"
+    className="group relative flex items-center justify-center h-full min-h-[120px] rounded-2xl border border-dashed border-slate-300 bg-slate-50 hover:bg-indigo-50 transition-all duration-500"
+  >
+    <div className="flex flex-col items-center text-center gap-3">
+      <span className="text-lg font-bold text-slate-700 group-hover:text-indigo-600 transition">
+        სრულად ნახვა
+      </span>
+
+      <div className="flex items-center gap-2 text-indigo-600 group-hover:gap-4 transition-all duration-300">
+        <span className="font-semibold">გადასვლა</span>
+        <ExternalLink size={18} />
+      </div>
+    </div>
+
+    <div className="absolute bottom-4 right-4 text-slate-300 group-hover:text-indigo-400 transition">
+      <svg
+        width="28"
+        height="28"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      >
+        <path d="M5 12h14" />
+        <path d="M13 5l7 7-7 7" />
+      </svg>
+    </div>
+  </a>
+</div>
         
         {/* მარჯვენა დაშორება მხოლოდ დესკტოპზე */}
-        <div className="hidden lg:block min-w-[10vw] h-10 flex-shrink-0" />
+        <div className="hidden lg:block min-w-[5vw] h-10 flex-shrink-0" />
       </div>
     </section>
   );
