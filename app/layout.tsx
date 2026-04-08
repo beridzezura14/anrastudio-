@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
+import ScrollToTop from "./ScrollToTop";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("http://localhost:3000"),
   title: {
     default: "ANRA Studio - ვებსაიტების დამზადება",
     template: "%s | ANRA Studio",
@@ -56,16 +58,23 @@ export const metadata: Metadata = {
   },
 };
 
+if (typeof window !== "undefined") {
+  history.scrollRestoration = "manual";
+}
+
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html>
-      <body>
+    <html lang="ka">
+      <body className="antialiased">
+        <ScrollToTop />
         <Header />
-        {children}
+
+        <main>{children}</main>
+
         <Footer />
       </body>
     </html>

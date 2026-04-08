@@ -102,8 +102,39 @@ export default function Pricing() {
 
   const hasDiscount = mounted && discount && discount.percent > 0 && !isExpired;
 
-  // Hydration-ის თავიდან ასაცილებლად
-  if (!mounted) return null;
+if (!mounted) {
+  return (
+    <section className="relative py-28 bg-gradient-to-b from-slate-50 via-white to-slate-100 overflow-hidden">
+      <div className="max-w-6xl mx-auto px-6 text-center">
+        
+        {/* TITLE SKELETON */}
+        <div className="h-10 w-80 mx-auto bg-slate-200 rounded-xl animate-pulse" />
+        <div className="h-4 w-96 mx-auto mt-4 bg-slate-200 rounded-lg animate-pulse" />
+
+        {/* COUNTDOWN SKELETON */}
+        <div className="flex justify-center gap-4 mt-12">
+          {[1,2,3,4].map((i) => (
+            <div
+              key={i}
+              className="w-[90px] h-[90px] rounded-2xl bg-slate-200 animate-pulse"
+            />
+          ))}
+        </div>
+
+        {/* PLANS SKELETON */}
+        <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-10">
+          {[1,2,3].map((i) => (
+            <div
+              key={i}
+              className="rounded-[2.5rem] p-8 bg-slate-200 animate-pulse h-[520px]"
+            />
+          ))}
+        </div>
+
+      </div>
+    </section>
+  );
+}
 
   return (
     <section className="relative py-28 bg-gradient-to-b from-slate-50 via-white to-slate-100 overflow-hidden">
@@ -131,8 +162,8 @@ export default function Pricing() {
               ].map((t, i) => (
                 <div key={i} className="relative group">
                   <div className="absolute inset-0 rounded-2xl bg-gradient-to-br blur opacity-30 group-hover:opacity-60 transition" />
-                  <div className="relative  backdrop-blur-xl rounded-2xl px-5 py-4 min-w-[90px] border border-white/10 shadow-2xl">
-                  <div className="text-4xl font-black tabular-nums bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+                  <div className="relative  backdrop-blur-xl rounded-2xl px-5 py-4 min-w-[70px] md:min-w-[90px] border border-white/10 shadow-2xl">
+                  <div className="text-2xl md:text-4xl font-black tabular-nums bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
                     {String(t.value).padStart(2, "0")}
                   </div>
                   <div className="text-[11px] uppercase tracking-wider mt-1 bg-gradient-to-r from-slate-900 to-slate-800 bg-clip-text text-transparent font-bold">

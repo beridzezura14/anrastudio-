@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 const items = [
   "პორტფოლიო და პერსონალური ვებსაიტები",
@@ -26,7 +27,7 @@ const items = [
 
 export default function Hero() {
   return (
-    <section className="relative w-full min-h-screen flex flex-col items-center justify-center bg-white overflow-hidden">
+    <section className="relative w-full min-h-screen flex flex-col items-center justify-center bg-white">
 
       {/* background glow */}
       <div className="absolute w-[500px] h-[500px] bg-sky-300/30 blur-[120px] rounded-full -top-40 -left-40" />
@@ -64,19 +65,25 @@ export default function Hero() {
           transition={{ delay: 0.4, duration: 0.7 }}
           className="mt-10 flex gap-4 flex-col sm:flex-row"
         >
-          <button className="px-6 py-3 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 text-white font-medium shadow-lg hover:scale-105 transition">
+          <Link
+            href="/pages/contact"
+            className="px-6 py-3 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 text-white font-medium shadow-lg hover:scale-105 transition inline-block"
+          >
             შეუკვეთე პროექტი
-          </button>
+          </Link>
 
-          <button className="px-6 py-3 rounded-xl border border-slate-200 text-slate-700 hover:border-sky-400 hover:text-sky-500 transition">
+          <Link
+            href="/pages/portfolio"
+            className="px-6 py-3 rounded-xl border border-slate-200 text-slate-700 hover:border-sky-400 hover:text-sky-500 transition inline-block"
+          >
             ჩვენი ნამუშევრები
-          </button>
+          </Link>
         </motion.div>
       </div>
 
       {/* MARQUEE */}
       <motion.div
-        initial={{ opacity: 0, x: 400 }}
+        initial={{ opacity: 0, x: 200 }}
         whileInView={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.8 }}
         viewport={{ once: true }}

@@ -121,7 +121,7 @@ export default function Services() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="pt-16 pb-24 bg-white overflow-hidden">
+    <section id="services" ref={sectionRef} className="pt-16 pb-24 bg-white">
 
       <div className="max-w-6xl mx-auto px-6 text-center">
 
@@ -147,7 +147,7 @@ export default function Services() {
                 className="p-6 md:p-8 rounded-2xl border border-slate-100 bg-white shadow-sm"
               >
                 <div
-                  className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${colors[s.color]}`}
+                  className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${colors[s.color as ServiceColor]}`}
                 >
                   <Icon className="w-6 h-6" />
                 </div>

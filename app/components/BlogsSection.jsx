@@ -9,22 +9,12 @@ import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 
-import { ArrowLeft, ArrowRight } from "lucide-react";
-
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
-type Blog = {
-  id: string;
-  title: string;
-  image_url: string | null;
-  author: string | null;
-  created_at: string | null;
-};
-
 function BlogsSection() {
-  const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [blogs, setBlogs] = useState([]);
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -33,9 +23,7 @@ function BlogsSection() {
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (!error && data) {
-        setBlogs(data as Blog[]);
-      }
+      if (!error && data) setBlogs(data);
     };
 
     fetchBlogs();
@@ -44,40 +32,41 @@ function BlogsSection() {
   return (
     <section
       id="blog"
-      className="py-24 bg-[#f9fafb]"
-      aria-labelledby="blog-heading"
+      className="py-24 bg-[#f9fafb] noto-sans-georgian"
+      aria-labelledby="blog-heading "
     >
       <div className="max-w-6xl mx-auto px-6">
 
         {/* HEADER */}
         <div className="mb-20 flex flex-col items-center text-center">
+          <span className="text-sm text-gray-400">ბლოგი</span>
 
           <h2
             id="blog-heading"
-            className="title text-3xl md:text-5xl font-bold text-slate-800"
+            className="text-4xl md:text-5xl font-semibold text-gray-900 mt-4 caps"
           >
-              ბლოგი
+            იურიდიული <span className="text-[#ff6e3a]">ბლოგი</span>
           </h2>
 
           <p className="text-gray-500 mt-4 max-w-xl">
-            წაიკითხეთ უახლესი სტატიები ვებ დეველოპმენტში.
+            წაიკითხეთ უახლესი სტატიები სამართალზე, იურიდიულ საკითხებზე და პრაქტიკულ რჩევებზე საქართველოში.
           </p>
 
-          <div className="w-24 h-1 bg-gradient-to-r from-sky-500 via-indigo-500 to-violet-500 mt-6 rounded-full" />
+          <div className="w-20 h-0.5 bg-[#ff6e3a] mt-6 rounded-full"></div>
         </div>
 
         <div className="relative">
 
           {/* ARROWS */}
-<div className="absolute -top-12 right-0 flex gap-3 z-10">
-  <button className="cursor-pointer custom-prev w-11 h-11 rounded-full bg-gradient-to-r from-sky-500/10 via-indigo-500/10 to-violet-500/10 border border-indigo-200 text-indigo-600 shadow-md flex items-center justify-center hover:from-sky-500/20 hover:via-indigo-500/20 hover:to-violet-500/20 transition">
-    <ArrowLeft size={18} />
-  </button>
+          <div className="absolute -top-12 right-0 flex gap-3 z-10">
+            <button className="custom-prev w-11 h-11 rounded-full bg-white/80 shadow-md flex items-center justify-center">
+              ←
+            </button>
 
-  <button className="cursor-pointer custom-next w-11 h-11 rounded-full bg-gradient-to-r from-sky-500/10 via-indigo-500/10 to-violet-500/10 border border-indigo-200 text-indigo-600 shadow-md flex items-center justify-center hover:from-sky-500/20 hover:via-indigo-500/20 hover:to-violet-500/20 transition">
-    <ArrowRight size={18} />
-  </button>
-</div>
+            <button className="custom-next w-11 h-11 rounded-full bg-white/80 shadow-md flex items-center justify-center">
+              →
+            </button>
+          </div>
 
           {/* SWIPER */}
           <Swiper
@@ -101,20 +90,18 @@ function BlogsSection() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5 }}
-                  className="group relative  my-5"
+                  className="group relative mt-5"
                 >
 
-                  {/* IMAGE */}
-                  <div className="relative overflow-hidden rounded-2xl h-72 w-full bg-gray-100">
-                    {blog.image_url && (
-                      <Image
-                        src={blog.image_url}
-                        alt={blog.title || "Blog image"}
-                        fill
-                        className="object-cover group-hover:scale-105 transition duration-700"
-                        sizes="(max-width: 768px) 100vw, 33vw"
-                      />
-                    )}
+                  {/* IMAGE (SEO FIXED) */}
+                  <div className="relative overflow-hidden rounded-2xl h-72 w-full">
+                    <Image
+                      src={blog.image_url}
+                      alt={blog.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition duration-700"
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                    />
 
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
 
@@ -127,10 +114,8 @@ function BlogsSection() {
                   <div className="mt-6">
 
                     <div className="flex justify-between text-xs text-gray-400">
-                      <time dateTime={blog.created_at ?? ""}>
-                        {blog.created_at
-                          ? new Date(blog.created_at).toLocaleDateString("en-US")
-                          : ""}
+                      <time dateTime={blog.created_at}>
+                        {new Date(blog.created_at).toLocaleDateString("en-US")}
                       </time>
 
                       <span>
@@ -138,13 +123,13 @@ function BlogsSection() {
                       </span>
                     </div>
 
-                    <h3 className="mt-4 text-xl font-semibold group-hover:text-indigo-600 transition">
+                    <h3 className="mt-4 text-xl font-semibold group-hover:text-[#ff6e3a] transition cups">
                       {blog.title}
                     </h3>
 
                     <Link
                       href={`/blogs/${blog.id}`}
-                      className="inline-block mt-4 text-transparent bg-clip-text bg-gradient-to-r from-sky-500 via-indigo-500 to-violet-500 text-sm font-semibold hover:opacity-80 transition"
+                      className="inline-block mt-4 text-[#ff6e3a] text-sm font-medium"
                     >
                       სრულად ნახვა →
                     </Link>

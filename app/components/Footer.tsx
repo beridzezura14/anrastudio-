@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowRight, Mail, MapPin, Phone } from "lucide-react";
+import Link from "next/link";
 
 export default function Footer() {
   return (
@@ -53,11 +54,11 @@ export default function Footer() {
             <div className="space-y-3 text-slate-400 text-sm">
 
               <div className="flex items-center gap-2">
-                <Mail size={16} /> info@anrastudio.com
+                <Mail size={16} /> anrastudio@gmail.com
               </div>
 
               <div className="flex items-center gap-2">
-                <Phone size={16} /> +995 599 00 00 00
+                <Phone size={16} /> +995 558 29 43 64
               </div>
 
               <div className="flex items-center gap-2">
@@ -79,10 +80,13 @@ export default function Footer() {
           </p>
 
           {/* CTA */}
-          <button className="group flex items-center gap-2 bg-white text-black px-5 py-2 rounded-full text-sm font-medium hover:bg-slate-200 transition">
+          <Link
+            href="/pages/contact"
+            className="group flex items-center gap-2 bg-white text-black px-5 py-2 rounded-full text-sm font-medium hover:bg-slate-200 transition"
+          >
             დაგვიკავშირდი
             <ArrowRight size={16} className="group-hover:translate-x-1 transition" />
-          </button>
+          </Link>
 
         </div>
       </div>

@@ -6,11 +6,11 @@ import { useEffect, useRef, useState } from "react";
 
 const links = [
   { href: "/", label: "მთავარი" },
-  { href: "/about", label: "ჩვენბს შესახებ" },
-  { href: "/services", label: "სერვისები" },
-  { href: "/portfolio", label: "პორტფოლიო" },
-  { href: "/prices", label: "ფასები" },
-  { href: "/contact", label: "კონტაქტი" },
+  { href: "/pages/about", label: "ჩვენბს შესახებ" },
+  { href: "/pages/services", label: "სერვისები" },
+  { href: "/pages/portfolio", label: "პორტფოლიო" },
+  { href: "/pages/prices", label: "ფასები" },
+  // { href: "/pages/contact", label: "კონტაქტი" },
 ];
 
 export default function Header() {
@@ -46,6 +46,7 @@ export default function Header() {
 
         {/* Logo */}
         <Link
+          scroll={true}
           href="/"
           className="text-xl font-bold bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-text text-transparent"
         >
@@ -82,7 +83,7 @@ export default function Header() {
 
         {/* CTA */}
         <Link
-          href="/contact"
+          href="/pages/contact"
           className="hidden lg:inline-flex px-5 py-2 text-sm rounded-full bg-gradient-to-r from-sky-500 to-indigo-500 text-white hover:opacity-90 transition"
         >
           დაგვიკავშირდი
@@ -156,7 +157,7 @@ export default function Header() {
             {/* CTA */}
             <div className="px-5 pt-3 pb-4">
               <Link
-                href="/contact"
+                href="/pages/contact"
                 onClick={() => setOpen(false)}
                 className="block text-center px-4 py-3 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 text-white font-medium shadow-md hover:opacity-90 transition"
               >

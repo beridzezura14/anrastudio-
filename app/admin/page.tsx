@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import PortfolioForm from "./PortfolioForm";
 import PricingForm from "./PricingForm";
+import BlogForm from "./BlogForm";
+
 
 export default function AdminPage() {
   const router = useRouter();
@@ -51,7 +53,8 @@ export default function AdminPage() {
       </div>
 
       <PortfolioForm />
-      <PricingForm /> 
+      <PricingForm />
+      <BlogForm />
     </div>
   );
 }

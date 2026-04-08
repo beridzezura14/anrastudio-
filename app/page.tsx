@@ -5,7 +5,7 @@ import Hero from "./components/Hero";
 import HowWeWork from "./components/HowWeWork";
 import Portfolio from "./components/Portfolio";
 import Pricing from "./components/Pricing";
-import Services from "./components/services";
+import Services from "./components/Service";
 
 
 
