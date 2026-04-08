@@ -169,7 +169,7 @@ export default function BlogForm() {
     setContent(blog.content);
     setAuthor(blog.author || "");
     setOldImage(blog.image_url || "");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // window.scrollTo({ behavior: "smooth" });
   };
 
   const resetForm = (): void => {
