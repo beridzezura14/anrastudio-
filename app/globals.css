@@ -1,27 +1,32 @@
 @import "tailwindcss";
+/* .animate-marquee {
+  animation: marquee 20s linear infinite;
+}
 
-
-/* @keyframes fadeDown {
+@keyframes marquee {
   0% {
-    opacity: 0;
-    transform: translateY(-25px);
-    filter: blur(10px);
+    transform: translateX(0);
   }
   100% {
-    opacity: 1;
-    transform: translateY(0);
-    filter: blur(0);
+    transform: translateX(-100%);
   }
-}
-
-.animate-fadeDown {
-  animation: fadeDown 0.8s ease-out forwards;
-}
-
-.animate-fadeDown2 {
-  animation: fadeDown 0.8s ease-out 0.15s forwards;
-}
-
-.animate-fadeDown3 {
-  animation: fadeDown 0.8s ease-out 0.3s forwards;
 } */
+
+
+/* Chrome, Edge, Safari */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #6366f1, #38bdf8);
+  border-radius: 200px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, #4f46e5, #0ea5e9);
+}

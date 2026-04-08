@@ -35,7 +35,7 @@ export default function Blog() {
         {/* header */}
         <div className="text-center mb-14">
           <h2 className="text-3xl md:text-5xl font-bold text-slate-800">
-            ჩვენი ბლოგი
+            ბლოგები
           </h2>
           <p className="mt-4 text-slate-500">
             რჩევები, სტატიები და თანამედროვე ვებ დეველოპმენტი

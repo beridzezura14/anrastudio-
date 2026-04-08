@@ -109,8 +109,13 @@ export default function Pricing() {
     <section className="relative py-28 bg-gradient-to-b from-slate-50 via-white to-slate-100 overflow-hidden">
       {/* ... დანარჩენი UI უცვლელია ... */}
       <div className="max-w-6xl mx-auto px-6 text-center relative z-10">
+<<<<<<< HEAD
         <h2 className="title text-3xl md:text-5xl font-bold text-slate-800">
           პროექტის ფასები
+=======
+        <h2 className="text-4xl md:text-6xl font-extrabold text-slate-900 tracking-tight">
+          ჩვენი პაკეტები
+>>>>>>> f660546b3ced0cbddab4c6c7d336d95dcc7ed5d6
         </h2>
         <p className="mt-4 text-slate-500 max-w-2xl mx-auto">
           აირჩეთ სასურველი პაკეთი, ჩვენ ვქმნით სრულ ციფრულ გადაწყვეტილებებს
@@ -132,12 +137,12 @@ export default function Pricing() {
                 <div key={i} className="relative group">
                   <div className="absolute inset-0 rounded-2xl bg-gradient-to-br blur opacity-30 group-hover:opacity-60 transition" />
                   <div className="relative  backdrop-blur-xl rounded-2xl px-5 py-4 min-w-[90px] border border-white/10 shadow-2xl">
-<div className="text-4xl font-black tabular-nums bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
-  {String(t.value).padStart(2, "0")}
-</div>
-<div className="text-[11px] uppercase tracking-wider mt-1 bg-gradient-to-r from-slate-900 to-slate-800 bg-clip-text text-transparent font-bold">
-  {t.label}
-</div>
+                  <div className="text-4xl font-black tabular-nums bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+                    {String(t.value).padStart(2, "0")}
+                  </div>
+                  <div className="text-[11px] uppercase tracking-wider mt-1 bg-gradient-to-r from-slate-900 to-slate-800 bg-clip-text text-transparent font-bold">
+                    {t.label}
+                  </div>
                   </div>
                 </div>
               ))}
