@@ -121,7 +121,7 @@ export default function Services() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="py-24 bg-white overflow-hidden">
+    <section ref={sectionRef} className="pt-16 pb-24 bg-white overflow-hidden">
 
       <div className="max-w-6xl mx-auto px-6 text-center">
 
