@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import type { LucideIcon } from "lucide-react";
 
 import {
   Paintbrush,
@@ -34,15 +35,15 @@ const colors: Record<ServiceColor, string> = {
   amber: "text-amber-500 bg-amber-50",
 };
 
-// ✅ SERVICE TYPE (FIX HERE)
+// ✅ SERVICE TYPE (FIXED)
 type Service = {
   title: string;
   desc: string;
-  icon: any;
+  icon: LucideIcon;
   color: ServiceColor;
 };
 
-// ✅ SERVICES ARRAY (STRICT TYPED)
+// ✅ SERVICES ARRAY
 const services: Service[] = [
   {
     title: "დახვეწილი დიზაინი",
