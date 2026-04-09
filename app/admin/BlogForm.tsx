@@ -21,6 +21,7 @@ const ReactQuill = dynamic(() => import("react-quill-new"), {
   ),
 });
 
+// @ts-ignore
 import "react-quill-new/dist/quill.snow.css";
 
 export default function BlogForm() {

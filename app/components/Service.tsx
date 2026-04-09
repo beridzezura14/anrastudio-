@@ -15,8 +15,16 @@ import {
 
 gsap.registerPlugin(ScrollTrigger);
 
-type ServiceColor = "sky" | "indigo" | "violet" | "emerald" | "rose" | "amber";
+// ✅ COLORS TYPE
+type ServiceColor =
+  | "sky"
+  | "indigo"
+  | "violet"
+  | "emerald"
+  | "rose"
+  | "amber";
 
+// ✅ COLORS MAP
 const colors: Record<ServiceColor, string> = {
   sky: "text-sky-500 bg-sky-50",
   indigo: "text-indigo-500 bg-indigo-50",
@@ -26,7 +34,16 @@ const colors: Record<ServiceColor, string> = {
   amber: "text-amber-500 bg-amber-50",
 };
 
-const services = [
+// ✅ SERVICE TYPE (FIX HERE)
+type Service = {
+  title: string;
+  desc: string;
+  icon: any;
+  color: ServiceColor;
+};
+
+// ✅ SERVICES ARRAY (STRICT TYPED)
+const services: Service[] = [
   {
     title: "დახვეწილი დიზაინი",
     desc: "ვქმნით თანამედროვე, ესთეტიკურ და მომხმარებელზე ორიენტირებულ დიზაინს.",
@@ -73,7 +90,6 @@ export default function Services() {
     const ctx = gsap.context(() => {
       if (!sectionRef.current) return;
 
-      // reset state first (IMPORTANT for no flicker)
       gsap.set(cardsRef.current, {
         opacity: 0,
         y: 30,
@@ -85,7 +101,6 @@ export default function Services() {
         y: 20,
       });
 
-      // TITLE
       gsap.to(".title", {
         opacity: 1,
         y: 0,
@@ -98,7 +113,6 @@ export default function Services() {
         },
       });
 
-      // CARDS
       gsap.to(cardsRef.current, {
         opacity: 1,
         y: 0,
@@ -113,7 +127,6 @@ export default function Services() {
         },
       });
 
-      // safe refresh
       ScrollTrigger.refresh();
     }, sectionRef);
 
@@ -122,9 +135,7 @@ export default function Services() {
 
   return (
     <section id="services" ref={sectionRef} className="pt-16 pb-24 bg-white">
-
       <div className="max-w-6xl mx-auto px-6 text-center">
-
         <h2 className="title text-3xl md:text-5xl font-bold text-slate-800">
           ჩვენი სერვისები
         </h2>
@@ -134,7 +145,6 @@ export default function Services() {
         </p>
 
         <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-
           {services.map((s, i) => {
             const Icon = s.icon;
 
@@ -147,7 +157,7 @@ export default function Services() {
                 className="p-6 md:p-8 rounded-2xl border border-slate-100 bg-white shadow-sm"
               >
                 <div
-                  className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${colors[s.color as ServiceColor]}`}
+                  className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${colors[s.color]}`}
                 >
                   <Icon className="w-6 h-6" />
                 </div>
@@ -156,13 +166,10 @@ export default function Services() {
                   {s.title}
                 </h3>
 
-                <p className="mt-2 text-slate-500 text-sm">
-                  {s.desc}
-                </p>
+                <p className="mt-2 text-slate-500 text-sm">{s.desc}</p>
               </div>
             );
           })}
-
         </div>
       </div>
     </section>
